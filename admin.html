@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard MPK</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 25px;
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 160px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        select {
+            padding: 7px;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: #1e3a8a;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #172d6b;
+        }
+
+        .kosong {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📋 Dashboard MPK</h1>
+
+    <div class="stats">
+
+        <div class="card">
+            <h2 id="total">0</h2>
+            <p>Total Aspirasi</p>
+        </div>
+
+        <div class="card">
+            <h2 id="diproses">0</h2>
+            <p>Sedang Diproses</p>
+        </div>
+
+        <div class="card">
+            <h2 id="selesai">0</h2>
+            <p>Selesai</p>
+        </div>
+
+    </div>
+
+    <div class="table-box">
+
+        <h2>📨 Daftar Aspirasi</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Kategori</th>
+                    <th>Aspirasi</th>
+                    <th>Status</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelAspirasi"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <script>
+
+        function escapeHTML(teks) {
+            return String(teks || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        function tampilkanDashboard() {
+
+            const data = JSON.parse(
+                localStorage.getItem("daftarAspirasi")
+            ) || [];
+
+            const total = data.length;
+
+            const diproses = data.filter(
+                item => item.status === "Sedang diproses"
+            ).length;
+
+            const selesai = data.filter(
+                item => item.status === "Selesai"
+            ).length;
+
+
+            document.getElementById("total").textContent = total;
+            document.getElementById("diproses").textContent = diproses;
+            document.getElementById("selesai").textContent = selesai;
+
+
+            const tabel = document.getElementById("tabelAspirasi");
+
+            tabel.innerHTML = "";
+
+
+            if (data.length === 0) {
+
+                tabel.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="kosong">
+                            Belum ada aspirasi.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+
+            data.forEach((item, index) => {
+
+                const baris = document.createElement("tr");
+
+                baris.innerHTML = `
+                    <td>${escapeHTML(item.kode)}</td>
+
+                    <td>${escapeHTML(item.kategori)}</td>
+
+                    <td>
+                        ${escapeHTML(item.isi)}
+                    </td>
+
+                    <td>
+                        <select onchange="ubahStatus(${index}, this.value)">
+
+                            <option value="Sedang diproses"
+                                ${item.status === "Sedang diproses" ? "selected" : ""}>
+                                Sedang diproses
+                            </option>
+
+                            <option value="Selesai"
+                                ${item.status === "Selesai" ? "selected" : ""}>
+                                Selesai
+                            </option>
+
+                        </select>
+                    </td>
+
+                    <td>
+                        <button onclick="lihatDetail(${index})">
+                            👁️ Lihat Detail
+                        </button>
+                    </td>
+                `;
+
+                tabel.appendChild(baris);
+
+            });
+
+        }
+
+
+        function ubahStatus(index, statusBaru) {
+
+            const data = JSON.parse(
+                localStorage.getItem("daftarAspirasi")
+            ) || [];
+
+            data[index].status = statusBaru;
+
+            localStorage.setItem(
+                "daftarAspirasi",
+                JSON.stringify(data)
+            );
+
+            tampilkanDashboard();
+
+        }
+
+
+        function lihatDetail(index) {
+
+            const data = JSON.parse(
+                localStorage.getItem("daftarAspirasi")
+            ) || [];
+
+            const item = data[index];
+
+            if (!item) {
+                alert("Data aspirasi tidak ditemukan.");
+                return;
+            }
+
+            alert(
+                "📋 DETAIL ASPIRASI\n\n" +
+
+                "Kode: " + item.kode + "\n" +
+
+                "Nama: " + item.nama + "\n" +
+
+                "Kelas: " + item.kelas + "\n" +
+
+                "Kategori: " + item.kategori + "\n\n" +
+
+                "Aspirasi:\n" +
+                item.isi + "\n\n" +
+
+                "Status: " + item.status + "\n" +
+
+                "Tanggal: " + item.tanggal
+            );
+
+        }
+
+
+        tampilkanDashboard();
+
+    </script>
+
+</body>
+</html>

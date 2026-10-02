@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspirasi Digital MPK</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #b91c1c;
+        }
+
+        .logo small {
+            display: block;
+            color: #777;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-left: 20px;
+        }
+
+        .hero {
+            min-height: 500px;
+            padding: 80px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .hero-text {
+            max-width: 600px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: #b91c1c;
+        }
+
+        .hero-text p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #b91c1c;
+            border: 1px solid #ddd;
+        }
+
+        .card {
+            background: white;
+            width: 350px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                flex-direction: column;
+                padding: 50px 6%;
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            ASPIRASI MPK
+            <small>MAN 5 JAKARTA</small>
+        </div>
+
+        <nav>
+            <a href="#">Beranda</a>
+            <a href="#">Kirim Aspirasi</a>
+            <a href="#">Cek Status</a>
+        </nav>
+
+    </header>
+
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <div class="badge">
+                MPK MAN 5 JAKARTA
+            </div>
+
+            <h1>
+                Suaramu Tidak
+                <span>Berhenti di Catatan.</span>
+            </h1>
+
+            <p>
+                Sampaikan kritik, saran, dan aspirasi
+                kamu kepada MPK. Setiap suara akan
+                diterima, dibahas, dan ditindaklanjuti.
+            </p>
+
+            <a href="aspirasi.html" class="btn btn-primary">
+                📝 Kirim Aspirasi
+            </a>
+
+            <a href="status.html" class="btn btn-secondary">
+                🔎 Cek Status
+            </a>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">
+                💬
+            </div>
+
+            <h2>
+                Aspirasi Siswa
+            </h2>
+
+            <p>
+                Tempat bagi siswa MAN 5 Jakarta
+                untuk menyampaikan kritik, saran,
+                dan ide untuk sekolah.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        © 2026 Aspirasi Digital MPK — MAN 5 Jakarta
+    </footer>
+
+</body>
+</html>

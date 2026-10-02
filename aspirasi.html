@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirim Aspirasi - MPK</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1e3a8a;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .anonymous {
+            margin-top: 15px;
+        }
+
+        .anonymous label {
+            display: inline;
+            font-weight: normal;
+        }
+
+        .anonymous input {
+            width: auto;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #1e3a8a;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #172d6b;
+        }
+
+        .hasil {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef2ff;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .kode {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📨 Kirim Aspirasi</h1>
+
+    <form id="formAspirasi">
+
+        <label for="nama">Nama</label>
+        <input
+            type="text"
+            id="nama"
+            placeholder="Masukkan nama"
+        >
+
+        <label for="kelas">Kelas</label>
+        <input
+            type="text"
+            id="kelas"
+            placeholder="Contoh: XI IPA 1"
+        >
+
+        <label for="kategori">Kategori</label>
+        <select id="kategori" required>
+            <option value="">-- Pilih kategori --</option>
+            <option value="Fasilitas">Fasilitas</option>
+            <option value="Kegiatan">Kegiatan</option>
+            <option value="Kedisiplinan">Kedisiplinan</option>
+            <option value="Lingkungan">Lingkungan</option>
+            <option value="Lainnya">Lainnya</option>
+        </select>
+
+        <label for="isi">Isi Aspirasi</label>
+        <textarea
+            id="isi"
+            placeholder="Tuliskan aspirasi kamu..."
+            required
+        ></textarea>
+
+        <div class="anonymous">
+            <input type="checkbox" id="anonymous">
+            <label for="anonymous">
+                Kirim sebagai anonim
+            </label>
+        </div>
+
+        <button type="submit">
+            🚀 Kirim Aspirasi
+        </button>
+
+    </form>
+
+    <div class="hasil" id="hasil">
+
+        <p>Aspirasi berhasil dikirim! 🎉</p>
+
+        <p>
+            Kode aspirasi kamu:
+        </p>
+
+        <p class="kode" id="kodeHasil"></p>
+
+        <p>
+            Simpan kode ini untuk mengecek status aspirasi.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.getElementById("formAspirasi").addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+        let nama = document.getElementById("nama").value.trim();
+        let kelas = document.getElementById("kelas").value.trim();
+        let kategori = document.getElementById("kategori").value;
+        let isi = document.getElementById("isi").value.trim();
+        let anonymous = document.getElementById("anonymous").checked;
+
+
+        if (anonymous) {
+            nama = "Anonim";
+            kelas = "-";
+        }
+
+
+        let daftarAspirasi = JSON.parse(
+            localStorage.getItem("daftarAspirasi")
+        ) || [];
+
+
+        let angkaAcak = Math.floor(
+            1000 + Math.random() * 9000
+        );
+
+
+        let kode =
+            "ASP-" +
+            new Date().getFullYear() +
+            "-" +
+            angkaAcak;
+
+
+        let aspirasiBaru = {
+
+            kode: kode,
+
+            nama: nama || "Anonim",
+
+            kelas: kelas || "-",
+
+            kategori: kategori,
+
+            isi: isi,
+
+            status: "Sedang diproses",
+
+            tanggal: new Date().toLocaleString("id-ID")
+
+        };
+
+
+        daftarAspirasi.push(aspirasiBaru);
+
+
+        localStorage.setItem(
+            "daftarAspirasi",
+            JSON.stringify(daftarAspirasi)
+        );
+
+
+        document.getElementById("kodeHasil").textContent = kode;
+
+        document.getElementById("hasil").style.display = "block";
+
+
+        document.getElementById("formAspirasi").reset();
+
+    }
+
+);
+
+</script>
+
+</body>
+</html>
