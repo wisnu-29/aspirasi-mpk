@@ -34,9 +34,7 @@
             font-weight: bold;
         }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
@@ -75,10 +73,6 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background: #172d6b;
-        }
-
         .hasil {
             margin-top: 20px;
             padding: 15px;
@@ -92,6 +86,16 @@
             font-weight: bold;
             color: #1e3a8a;
         }
+
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            display: none;
+            word-break: break-word;
+        }
     </style>
 </head>
 
@@ -104,18 +108,10 @@
     <form id="formAspirasi">
 
         <label for="nama">Nama</label>
-        <input
-            type="text"
-            id="nama"
-            placeholder="Masukkan nama"
-        >
+        <input type="text" id="nama" placeholder="Masukkan nama">
 
         <label for="kelas">Kelas</label>
-        <input
-            type="text"
-            id="kelas"
-            placeholder="Contoh: XI IPA 1"
-        >
+        <input type="text" id="kelas" placeholder="Contoh: XI IPA 1">
 
         <label for="kategori">Kategori</label>
         <select id="kategori" required>
@@ -128,120 +124,116 @@
         </select>
 
         <label for="isi">Isi Aspirasi</label>
-        <textarea
-            id="isi"
-            placeholder="Tuliskan aspirasi kamu..."
-            required
-        ></textarea>
+        <textarea id="isi" placeholder="Tuliskan aspirasi kamu..." required></textarea>
 
         <div class="anonymous">
             <input type="checkbox" id="anonymous">
-            <label for="anonymous">
-                Kirim sebagai anonim
-            </label>
+            <label for="anonymous">Kirim sebagai anonim</label>
         </div>
 
-        <button type="submit">
-            🚀 Kirim Aspirasi
-        </button>
+        <button type="submit">🚀 Kirim Aspirasi</button>
 
     </form>
 
     <div class="hasil" id="hasil">
-
         <p>Aspirasi berhasil dikirim! 🎉</p>
-
-        <p>
-            Kode aspirasi kamu:
-        </p>
-
+        <p>Kode aspirasi kamu:</p>
         <p class="kode" id="kodeHasil"></p>
-
-        <p>
-            Simpan kode ini untuk mengecek status aspirasi.
-        </p>
-
+        <p>Simpan kode ini untuk mengecek status aspirasi.</p>
     </div>
+
+    <div class="error" id="error"></div>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-document.getElementById("formAspirasi").addEventListener(
-    "submit",
-    function(event) {
+const SUPABASE_URL = "https://qvwkrqvoqaqauaxvmlwk.supabase.co";
 
-        event.preventDefault();
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_kqwEBSqXzw8skYIBGn90nw_7cU3AirA";
 
-        let nama = document.getElementById("nama").value.trim();
-        let kelas = document.getElementById("kelas").value.trim();
-        let kategori = document.getElementById("kategori").value;
-        let isi = document.getElementById("isi").value.trim();
-        let anonymous = document.getElementById("anonymous").checked;
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
 
+document.getElementById("formAspirasi").addEventListener("submit", async function(event) {
 
-        if (anonymous) {
-            nama = "Anonim";
-            kelas = "-";
+    event.preventDefault();
+
+    const errorElement = document.getElementById("error");
+    const hasilElement = document.getElementById("hasil");
+
+    errorElement.style.display = "none";
+    errorElement.textContent = "";
+    hasilElement.style.display = "none";
+
+    let nama = document.getElementById("nama").value.trim();
+    let kelas = document.getElementById("kelas").value.trim();
+    const kategori = document.getElementById("kategori").value;
+    const isi = document.getElementById("isi").value.trim();
+    const anonymous = document.getElementById("anonymous").checked;
+
+    if (anonymous) {
+        nama = "Anonim";
+        kelas = "-";
+    }
+
+    const angkaAcak = Math.floor(1000 + Math.random() * 9000);
+
+    const kode =
+        "ASP-" +
+        new Date().getFullYear() +
+        "-" +
+        angkaAcak;
+
+    try {
+
+        const { error } = await supabaseClient
+            .from("aspirasi")
+            .insert({
+                kode: kode,
+                nama: nama || "Anonim",
+                kelas: kelas || "-",
+                kategori: kategori,
+                isi: isi
+            });
+
+        if (error) {
+
+            console.error("ERROR SUPABASE:", error);
+
+            errorElement.innerHTML =
+                "<b>Gagal mengirim aspirasi.</b><br><br>" +
+                "Kode: " + (error.code || "-") + "<br>" +
+                "Pesan: " + (error.message || "-") + "<br>" +
+                "Detail: " + (error.details || "-") + "<br>" +
+                "Hint: " + (error.hint || "-");
+
+            errorElement.style.display = "block";
+
+            return;
         }
 
-
-        let daftarAspirasi = JSON.parse(
-            localStorage.getItem("daftarAspirasi")
-        ) || [];
-
-
-        let angkaAcak = Math.floor(
-            1000 + Math.random() * 9000
-        );
-
-
-        let kode =
-            "ASP-" +
-            new Date().getFullYear() +
-            "-" +
-            angkaAcak;
-
-
-        let aspirasiBaru = {
-
-            kode: kode,
-
-            nama: nama || "Anonim",
-
-            kelas: kelas || "-",
-
-            kategori: kategori,
-
-            isi: isi,
-
-            status: "Sedang diproses",
-
-            tanggal: new Date().toLocaleString("id-ID")
-
-        };
-
-
-        daftarAspirasi.push(aspirasiBaru);
-
-
-        localStorage.setItem(
-            "daftarAspirasi",
-            JSON.stringify(daftarAspirasi)
-        );
-
-
         document.getElementById("kodeHasil").textContent = kode;
-
-        document.getElementById("hasil").style.display = "block";
-
+        hasilElement.style.display = "block";
 
         document.getElementById("formAspirasi").reset();
 
+    } catch (error) {
+
+        console.error(error);
+
+        errorElement.innerHTML =
+            "<b>Terjadi error:</b><br><br>" +
+            error.message;
+
+        errorElement.style.display = "block";
     }
 
-);
+});
 
 </script>
 
